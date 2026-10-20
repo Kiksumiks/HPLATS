@@ -1,0 +1,8 @@
+2026-10-20 08:15:01 | INFO   | Thread-1 | System initialization started successfully.
+2026-10-20 08:15:02 | DEBUG  | Thread-1 | Loading configuration file from C:\Config\settings.json
+2026-10-20 08:15:03 | WARN   | Thread-2 | Database connection pool latency high: 450ms
+2026-10-20 08:15:04 | ERROR  | Thread-3 | Failed to authenticate user [ID: 9942]: Token expired.
+2026-10-20 08:15:05 | INFO   | Thread-1 | User session refreshed successfully for [ID: 1024].
+2026-10-20 08:15:06 | FATAL  | Thread-4 | Out of memory exception in worker worker_pool.cpp:112
+2026-10-20 08:15:07 | ERROR  | Thread-3 | Database timeout while executing query SELECT * FROM logs.
+2026-10-20 08:15:08 | INFO   | Thread-2 | Background cleanup task finished. Freed 42MB.

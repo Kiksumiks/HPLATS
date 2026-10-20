@@ -1,0 +1,15 @@
+# Build directories
+/build/
+/bin/
+/obj/
+*.exe
+*.dll
+*.lib
+*.exp
+*.obj
+*.pdb
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
