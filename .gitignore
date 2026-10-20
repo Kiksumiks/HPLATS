@@ -8,6 +8,7 @@
 *.exp
 *.obj
 *.pdb
+*.ilk
 
 # Visual Studio files
 .vs/
