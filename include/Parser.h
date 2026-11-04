@@ -1,3 +1,5 @@
+#ifndef _PARSER_H_
+#define _PARSER_H_
 
 typedef struct {
     char date[11];
@@ -10,3 +12,5 @@ typedef struct {
 LogEntry* load_log_file(const char* filepath, int* out_count);
 int parse_log_line(const char* line, LogEntry* out_entry);
 void free_log_entrys(LogEntry* entrys);
+
+#endif // !_PARSER_H_

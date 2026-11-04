@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "../include/Parser.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -56,6 +57,7 @@ LogEntry* load_log_file(const char* filepath, int* out_count) {
     fclose(file);
 
     *out_count = index;
+    
     return entries;
 }
 
