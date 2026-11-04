@@ -9,8 +9,26 @@
 *.obj
 *.pdb
 *.ilk
+*.tlog
+*.log
+*.idb
+*.recipe
 
 # Visual Studio files
+.vscode/
 .vs/
 *.user
 *.suo
+*.sln
+*.filters
+*.vcxproj
+*.user
+
+# Custom folders
+LogEngineCore/LogEngineCore/
+LogEngineCore/x64
+LogEngineCore/dllmain.cpp
+
+# Remove these below when ready
+
+LogAnalyticsGUI/
