@@ -1,103 +1,100 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include "../include/Parser.h"
+#include "Parser.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
-// Get rid of this function. Rather do single file read and use realloc!
-// Get rid of this function. Rather do single file read and use realloc!
-// Get rid of this function. Rather do single file read and use realloc!
-int count_lines_in_file(const char* filepath) {
-    char buffer[512];
-    int lineCount = 0;
+
+LogEntry* load_log_file(const char* filepath, int* out_count, char* file_buffer) {
 
     FILE* file = fopen(filepath, "r");
-    if (file == NULL) {
-        printf("Failed to open file from path '%s'\n", filepath);
-        return 0;
-    }
+    if (!file) return NULL;
 
-    while (fgets(buffer, 512, file))
-        lineCount++;
+    fseek(file, 0, SEEK_END);
+    long file_size = ftell(file);
+    fseek(file, 0, SEEK_SET);
 
-    fclose(file);
-
-    return lineCount;
-}
-
-LogEntry* load_log_file(const char* filepath, int* out_count) {
-
-    // Get line/entry count
-    int entryCount = count_lines_in_file(filepath);
-    if (entryCount == 0)
-        return NULL;
-
-    // Open file
-    FILE* file = fopen(filepath, "r");
-    if (file == NULL) {
-        printf("Failed to open file from path '%s'\n", filepath);
+    file_buffer = (char*)malloc(file_size + 1);
+    if(!file_buffer) {
         fclose(file);
         return NULL;
     }
 
-    LogEntry* entries = (LogEntry*)malloc(sizeof(LogEntry) * entryCount);
+    fread(file_buffer, 1, file_size, file);
+    file_buffer[file_size] = '\0';
+    fclose(file);
+
+    int currentArraySize = 10000;
+    LogEntry* entries = (LogEntry*)malloc(sizeof(LogEntry) * currentArraySize);
     if(entries == NULL) {
         fclose(file);
         return NULL;
     }
 
-    char buffer[512];
     int index = 0;
-    while (fgets(buffer, 512, file)) {
-        int result = parse_log_line(buffer, entries + index);
-        if(result == 1)
+    char* line = strtok(file_buffer, "\n");
+    while (line != NULL) {
+        if (parse_log_line(line, &entries[index])) {
             index++;
+
+            if (index >= currentArraySize) {
+                currentArraySize *= 2;
+                LogEntry* tempEntries = (LogEntry*)realloc(entries, sizeof(LogEntry) * currentArraySize);
+                if (tempEntries == NULL) {
+                    free(file_buffer);
+                    free(entries);
+                    return NULL;
+                }
+                entries = tempEntries;
+            }
+        }
+
+        line = strtok(NULL, "\n");
     }
 
-    fclose(file);
-
     *out_count = index;
-    
     return entries;
 }
 
-int parse_log_line(const char* line, LogEntry* out_entry) {
+int parse_log_line(char* line, LogEntry* out_entry) {
 
-    char buffer[512];
-    strncpy(buffer, line, 512);
+    if (!line || *line == '\n' || *line == '\0') return 0;
 
-    char* ptr = strtok(buffer, " |");
-    if (ptr == NULL) {
-        return 0;
-    }
+    out_entry->date = line;
+    line[10] = '\0';
 
-    char* array[5] = { 0 };
+    out_entry->time = line + 11;
+    line[19] = '\0';
 
-    for (int i = 0; ptr != NULL; i++) {
-        array[i] = ptr;
-        if (i >= 3) break;
-        ptr = strtok(NULL, " |");
-    }
+    char* level_ptr = line + 22;
+    out_entry->level = level_ptr;
 
-    ptr = strtok(NULL, "|");
-    array[4] = ptr;
+    char* next_delim = strstr(level_ptr, " | ");
+    if(!next_delim) return 0;
+    *next_delim = '\0';
 
-    if (array[0] == NULL || array[1] == NULL || array[2] == NULL || array[3] == NULL || array[4] == NULL)
-        return 0;
+    char* thread_ptr = next_delim + 3;
+    out_entry->thread_id = thread_ptr;
 
-    strncpy(out_entry->date, array[0], 11);
-    strncpy(out_entry->time, array[1], 9);
-    strncpy(out_entry->level, array[2], 8);
-    strncpy(out_entry->thread_id, array[3], 16);
-    strncpy(out_entry->message, array[4] + 1, 256); // + 1 removes leading whitespace
+    next_delim = strstr(thread_ptr, " | ");
+    if(!next_delim) return 0;
+    *next_delim = '\0';
+
+    out_entry->message = next_delim + 3;
 
     return 1;
 }
 
-void free_log_entrys(LogEntry* entrys) {
+void free_log_entrys(LogEntry* entrys, char* file_buffer) {
     if (entrys != NULL) {
         free(entrys);
         entrys = NULL;
+    }
+
+    if (file_buffer != NULL) {
+        free(file_buffer);
+        file_buffer = NULL;
     }
 }
 
@@ -120,15 +117,29 @@ int main() {
     free_log_entry(entry);
     */
 
-    char logPath[] = "../Example-Log.txt";
+    char logPath[] = "../heavy_test_log.txt";
+
+    //char logPath[] = "../Example-Log.txt";
+
     int entryCount = 0;
-    LogEntry* entries = load_log_file(logPath, &entryCount);
 
-    for (int i = 0; i < entryCount; i++) {
-        printf("%s\n%s\n%s\n%s\n%s\n\n", entries[i].date, entries[i].time, entries[i].level, entries[i].thread_id, entries[i].message);
-    }
+    char* fileBuffer = NULL;
+    
+    clock_t begin = clock();
 
-    free_log_entrys(entries);
+    LogEntry* entries = load_log_file(logPath, &entryCount, fileBuffer);
+
+    clock_t end = clock();
+
+    double timeSpend = (double)(end - begin) / CLOCKS_PER_SEC;
+
+    //for (int i = 0; i < entryCount; i++) {
+        //printf("%s %s %s %s %s\n", entries[i].date, entries[i].time, entries[i].level, entries[i].thread_id, entries[i].message);
+    //}
+
+    printf("Read %d log entries in %lf seconds.\n", entryCount, timeSpend);
+
+    free_log_entrys(entries, fileBuffer);
 
     return 0;
 }

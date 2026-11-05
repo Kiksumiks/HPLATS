@@ -1,7 +1,7 @@
 # Build directories
-/build/
-/bin/
-/obj/
+build/
+bin/
+obj/
 *.exe
 *.dll
 *.lib
@@ -17,12 +17,9 @@
 # Visual Studio files
 .vscode/
 .vs/
-*.user
 *.suo
-*.sln
 *.filters
 *.vcxproj
-*.user
 
 # Custom folders
 LogEngineCore/LogEngineCore/
@@ -30,5 +27,3 @@ LogEngineCore/x64
 LogEngineCore/dllmain.cpp
 
 # Remove these below when ready
-
-LogAnalyticsGUI/

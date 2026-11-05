@@ -1,25 +1,10 @@
 #pragma once
 
-
 #ifdef LOGENGINE_EXPORTS
 #define LOGENGINE_API __declspec(dllexport)
 #else
 #define LOGENGINE_API __declspec(dllimport)
 #endif
-
-
-/*
-#pragma pack(push, 1)
-typedef struct {
-	char date[11];
-	char time[9];
-	char level[8];
-	char thread_id[16];
-	char message[256];
-} LogEntryManaged;
-#pragma pack(pop)
-*/
-
 
 extern "C" {
 
