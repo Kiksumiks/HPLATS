@@ -9,11 +9,14 @@ typedef struct {
     char* message;
 } LogEntry;
 
-// Reads file into buffer and creates dynamic array of LogEntry's.
+// Read file into buffer.
 // [in] filepath - path to log file
-// [out] out_count - count of entries
-// [out] file_buffer - dynamically allocated array for file content. Function allocates this using malloc so when calling this should be NULL.
-LogEntry* load_log_file(const char* filepath, int* out_count, char* file_buffer);
+char* readFileIntoBuffer(const char* filepath);
+
+// Reads file into buffer and creates dynamic array of LogEntry's.
+// [out] out_count - Count of entries
+// [in] file_buffer - Buffer that holds all bytes in file
+LogEntry* load_log_file(int* out_count, char* file_buffer);
 
 // Parses line for specific format.
 // [in] line - string to be parsed.
