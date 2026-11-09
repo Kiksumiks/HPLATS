@@ -3,6 +3,7 @@
 #include "Engine.h"
 #include <cstring>
 #include <cstdio>
+#include <cstdint>
 
 #pragma pack(push, 1)
 typedef struct {
@@ -13,6 +14,7 @@ typedef struct {
     char message[256];
 } LogEntryManaged;
 #pragma pack(pop)
+
 
 extern "C" {
 
@@ -27,12 +29,6 @@ extern "C" {
         return (void*)engine;
     }
 
-    LOGENGINE_API int GetSessionCount(void* sessionHandle) {
-        if (!sessionHandle) return 0;
-        LogEngine* engine = static_cast<LogEngine*>(sessionHandle);
-        return engine->GetCount();
-    }
-
     LOGENGINE_API void CloseLogSession(void* sessionHandle) {
         if (sessionHandle) {
             LogEngine* engine = static_cast<LogEngine*>(sessionHandle);
@@ -40,7 +36,65 @@ extern "C" {
         }
     }
 
-    LOGENGINE_API int GetLogEntries(void* sessionHandle, void* outBuffer, int maxCount) {      
+    //LOGENGINE_API int RequestLogEntries(void* sessionHandle, uint8_t fLevel, uint8_t fThread, uint64_t fMinTime, uint64_t fMaxTime) {
+        //if (!sessionHandle) return 0;
+        //LogEngine* engine = static_cast<LogEngine*>(sessionHandle);
+        //return engine->ProcessRequestAndGetCount(fLevel, fThread, fMinTime, fMaxTime);
+    //}
+
+    LOGENGINE_API int GetRequestedEntries(void* sessionHandle, void* outBuffer, int maxCount, uint8_t fLevel, uint8_t fThread, uint64_t fMinTime, uint64_t fMaxTime) {
+        if (!sessionHandle) return 0;
+        LogEngine* engine = static_cast<LogEngine*>(sessionHandle);
+        int totalRequestedCount = engine->ProcessRequestAndGetCount(fLevel, fThread, fMinTime, fMaxTime);
+        const std::vector<LogEntry*> allRequestedEntries = engine->GetRequestedEntries();
+        LogEntryManaged* buffer = (LogEntryManaged*)outBuffer;
+        int count_to_copy = (totalRequestedCount < maxCount) ? totalRequestedCount : maxCount;
+        for (int i = 0; i < count_to_copy; i++) {
+            LogEntry* src = allRequestedEntries[i];
+            LogEntryManaged* dest = &buffer[i];
+            std::memset(dest, 0, sizeof(LogEntryManaged));
+            snprintf(dest->date, sizeof(dest->date), "%s", src->date);
+            snprintf(dest->time, sizeof(dest->time), "%s", src->time);
+            snprintf(dest->level, sizeof(dest->level), "%s", src->level);
+            snprintf(dest->thread_id, sizeof(dest->thread_id), "%s", src->thread_id);
+            snprintf(dest->message, sizeof(dest->message), "%s", src->message);
+        }
+
+        return count_to_copy;
+    }
+
+    LOGENGINE_API int GetTotalCount(void* sessionHandle) {
+        if (!sessionHandle) return 0;
+        LogEngine* engine = static_cast<LogEngine*>(sessionHandle);
+        return engine->GetTotalEntryCount();
+    }
+
+    LOGENGINE_API void GetLogInfoCounts(void* sessionHandle, int& cInfo, int& cDebug, int& cWarning, int& cError, int& cFatal) {
+        if (!sessionHandle) return;
+        LogEngine* engine = static_cast<LogEngine*>(sessionHandle);
+        
+        cInfo = engine->GetInfoCount();
+        cDebug = engine->GetDebugCount();
+        cWarning = engine->GetWarningCount();
+        cError = engine->GetErrorCount();
+        cFatal = engine->GetFatalCount();
+    }
+
+
+    LOGENGINE_API bool IsProcessingComplete(void* sessionHandle) {
+        if (!sessionHandle) return false;
+        LogEngine* engine = static_cast<LogEngine*>(sessionHandle);
+        return engine->IsMetadataReady();
+    }
+
+    /*
+    LOGENGINE_API int GetSessionCount(void* sessionHandle) {
+        if (!sessionHandle) return 0;
+        LogEngine* engine = static_cast<LogEngine*>(sessionHandle);
+        return engine->GetCount();
+    }
+
+    LOGENGINE_API int GetAllLogEntries(void* sessionHandle, void* outBuffer, int maxCount) {      
         if (!sessionHandle || !outBuffer) return 0;
 
         LogEngine* engine = static_cast<LogEngine*>(sessionHandle);
@@ -65,5 +119,21 @@ extern "C" {
 
         return count_to_copy;
     }
+    */
+
+    /*
+        LOGENGINE_API int GetEntriesFiltered(void* sessionHandle, void* outBuffer, int maxCount, int fLevel, int fThread) {
+        if (!sessionHandle || !outBuffer) return 0;
+        LogEngine* engine = static_cast<LogEngine*>(sessionHandle);
+        if (!engine->IsMetadataReady()) return -1;
+
+    }
+
+        LOGENGINE_API bool IsProcessingComplete(void* sessionHandle) {
+        if (!sessionHandle) return false;
+        LogEngine* engine = static_cast<LogEngine*>(sessionHandle);
+        return engine->IsMetadataReady();
+    }
+    */
 
 }

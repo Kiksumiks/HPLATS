@@ -28,45 +28,27 @@
         /// </summary>
         private void InitializeComponent()
         {
-            load_button = new Button();
             listBox = new ListBox();
-            comboBox1 = new ComboBox();
             browse_button = new Button();
             filepath_label = new Label();
-            clear_button = new Button();
-            statistic_label = new Label();
+            metaLabel = new Label();
+            count_label = new Label();
+            softStat_label = new Label();
+            filter_button = new Button();
+            hardStat_label = new Label();
             SuspendLayout();
-            // 
-            // load_button
-            // 
-            load_button.Location = new Point(713, 415);
-            load_button.Name = "load_button";
-            load_button.Size = new Size(75, 23);
-            load_button.TabIndex = 0;
-            load_button.Text = "Load";
-            load_button.UseVisualStyleBackColor = true;
-            load_button.Click += load_button_Click;
             // 
             // listBox
             // 
             listBox.FormattingEnabled = true;
-            listBox.Location = new Point(12, 12);
+            listBox.Location = new Point(12, 15);
             listBox.Name = "listBox";
-            listBox.Size = new Size(616, 379);
+            listBox.Size = new Size(860, 589);
             listBox.TabIndex = 1;
-            // 
-            // comboBox1
-            // 
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(634, 12);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(121, 23);
-            comboBox1.TabIndex = 2;
-            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
             // browse_button
             // 
-            browse_button.Location = new Point(12, 415);
+            browse_button.Location = new Point(12, 626);
             browse_button.Name = "browse_button";
             browse_button.Size = new Size(75, 23);
             browse_button.TabIndex = 3;
@@ -77,43 +59,70 @@
             // filepath_label
             // 
             filepath_label.AutoSize = true;
-            filepath_label.Location = new Point(93, 419);
+            filepath_label.Location = new Point(93, 630);
             filepath_label.Name = "filepath_label";
             filepath_label.Size = new Size(92, 15);
             filepath_label.TabIndex = 4;
             filepath_label.Text = "File not selected";
             // 
-            // clear_button
+            // metaLabel
             // 
-            clear_button.Location = new Point(632, 415);
-            clear_button.Name = "clear_button";
-            clear_button.Size = new Size(75, 23);
-            clear_button.TabIndex = 5;
-            clear_button.Text = "Clear";
-            clear_button.UseVisualStyleBackColor = true;
-            clear_button.Click += clear_button_Click;
+            metaLabel.AutoSize = true;
+            metaLabel.Location = new Point(426, 613);
+            metaLabel.Name = "metaLabel";
+            metaLabel.Size = new Size(110, 15);
+            metaLabel.TabIndex = 8;
+            metaLabel.Text = "Metadata not ready";
             // 
-            // statistic_label
+            // count_label
             // 
-            statistic_label.AutoSize = true;
-            statistic_label.Location = new Point(632, 361);
-            statistic_label.Name = "statistic_label";
-            statistic_label.Size = new Size(65, 30);
-            statistic_label.TabIndex = 6;
-            statistic_label.Text = "Read time:\r\nCopy time:";
+            count_label.AutoSize = true;
+            count_label.Location = new Point(12, 608);
+            count_label.Name = "count_label";
+            count_label.Size = new Size(0, 15);
+            count_label.TabIndex = 9;
+            // 
+            // softStat_label
+            // 
+            softStat_label.AutoSize = true;
+            softStat_label.Location = new Point(698, 609);
+            softStat_label.Name = "softStat_label";
+            softStat_label.Size = new Size(63, 45);
+            softStat_label.TabIndex = 6;
+            softStat_label.Text = "Infos:\r\nDebugs:\r\nWarnings: ";
+            // 
+            // filter_button
+            // 
+            filter_button.Location = new Point(443, 631);
+            filter_button.Name = "filter_button";
+            filter_button.Size = new Size(75, 23);
+            filter_button.TabIndex = 10;
+            filter_button.Text = "Filters";
+            filter_button.UseVisualStyleBackColor = true;
+            filter_button.Click += filter_button_Click;
+            // 
+            // hardStat_label
+            // 
+            hardStat_label.AutoSize = true;
+            hardStat_label.Location = new Point(798, 613);
+            hardStat_label.Name = "hardStat_label";
+            hardStat_label.Size = new Size(40, 30);
+            hardStat_label.TabIndex = 11;
+            hardStat_label.Text = "Errors:\r\nFatals:";
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            Controls.Add(statistic_label);
-            Controls.Add(clear_button);
+            ClientSize = new Size(884, 661);
+            Controls.Add(hardStat_label);
+            Controls.Add(filter_button);
+            Controls.Add(count_label);
+            Controls.Add(metaLabel);
+            Controls.Add(softStat_label);
             Controls.Add(filepath_label);
             Controls.Add(browse_button);
-            Controls.Add(comboBox1);
             Controls.Add(listBox);
-            Controls.Add(load_button);
             Name = "Form1";
             Text = "HPLATS";
             ResumeLayout(false);
@@ -121,13 +130,13 @@
         }
 
         #endregion
-
-        private Button load_button;
         private ListBox listBox;
-        private ComboBox comboBox1;
         private Button browse_button;
         private Label filepath_label;
-        private Button clear_button;
-        private Label statistic_label;
+        private Label metaLabel;
+        private Label count_label;
+        private Label softStat_label;
+        private Button filter_button;
+        private Label hardStat_label;
     }
 }

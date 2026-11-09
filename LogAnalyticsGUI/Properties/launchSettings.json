@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LogAnalyticsGUI": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
