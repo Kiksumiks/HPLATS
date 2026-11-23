@@ -26,7 +26,7 @@ inline uint64_t ParseTimeStamp(const char* date, const char* time) {
 }
 
 inline uint8_t MapLogLevel(const char* level) {
-
+	// Hmm...
 	switch (level[0]) {
 	case 'I': return 1; break;
 	case 'D': return 2; break;
@@ -85,7 +85,7 @@ private:
 			meta.level = MapLogLevel(raw.level);
 			meta.thread_id = raw.thread_id[7] - '0';
 
-			if (meta.level == 1)	  m_infoCount++;
+			if		(meta.level == 1) m_infoCount++;
 			else if (meta.level == 2) m_debugCount++;
 			else if (meta.level == 3) m_warningCount++;
 			else if (meta.level == 4) m_errorCount++;
@@ -119,9 +119,10 @@ public:
 		// Read and parse file
 		m_fileBuffer = readFileIntoBuffer(filepath);
 		if (!m_fileBuffer) return false;
-		m_entries = load_log_file(&m_entryCount, m_fileBuffer);
+		m_entries = load_log_file(&m_entryCount, m_fileBuffer); // Why this is not called parse file?
 		if (!m_entries) return false;
 
+		// And what are we doing here?
 		//if (m_workerThread.joinable())
 			//m_workerThread.join();
 
@@ -134,7 +135,7 @@ public:
 	
 	int ProcessRequestAndGetCount(uint8_t fLevel, uint8_t fThread, uint64_t fMinTime, uint64_t fMaxTime) {
 		m_requestedEntries.clear();
-		m_requestedEntries.reserve(m_entryCount); // For total count;
+		m_requestedEntries.reserve(m_entryCount); // Reserve for total count;
 
 		for (const LogMetaData& log : m_metadata) {
 			if (fLevel != 0 && fLevel != log.level) continue;
@@ -148,15 +149,9 @@ public:
 		return (int)m_requestedEntries.size();
 	}
 
-	const std::vector<LogEntry*>& GetRequestedEntries() {
-		return m_requestedEntries;
-	}
-
-	// This is useless atm
+	const std::vector<LogEntry*>& GetRequestedEntries() { return m_requestedEntries; }
 	int GetTotalEntryCount() const { return m_entryCount; }
-
 	bool IsMetadataReady() const { return m_isMetadataReady; }
-
 	int GetInfoCount() const { return m_infoCount; }
 	int GetDebugCount() const { return m_debugCount; }
 	int GetWarningCount() const { return m_warningCount; }

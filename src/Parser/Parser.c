@@ -38,13 +38,17 @@ LogEntry* load_log_file(int* out_count, char* file_buffer) {
     if(entries == NULL) return NULL;
 
     int index = 0;
+
+    // strtok ran million logs in 0.15-0.16 seconds.
+    // This is more "messy" but way faster. Million in ~0.06 seconds
     char* currentLine = file_buffer;
     char* nextLine = NULL;
 
     while (currentLine && *currentLine != '\0') {
 
+        // Prepare next line if it exists
         nextLine = strchr(currentLine, '\n');
-        if( nextLine) {
+        if (nextLine) {
             *nextLine = '\0';
             nextLine++;
         }
@@ -52,6 +56,7 @@ LogEntry* load_log_file(int* out_count, char* file_buffer) {
         if (parse_log_line(currentLine, &entries[index])) {
             index++;
 
+            // Reallocation if needed
             if (index >= currentArraySize) {
                 currentArraySize *= 2;
                 LogEntry* tempEntries = (LogEntry*)realloc(entries, sizeof(LogEntry) * currentArraySize);
@@ -61,8 +66,9 @@ LogEntry* load_log_file(int* out_count, char* file_buffer) {
                 }
                 entries = tempEntries;
             }
+
         }
-        currentLine = nextLine;    
+        currentLine = nextLine;
     }
 
     *out_count = index;
@@ -74,8 +80,7 @@ int parse_log_line(char* line, LogEntry* out_entry) {
     if (!line || *line == '\n' || *line == '\0') return 0;
     if (strlen(line) < 22) return 0;
 
-    out_entry->date = line;
-     
+    out_entry->date = line; 
     out_entry->time = line + 11;
 
     line[10] = '\0';
@@ -107,10 +112,10 @@ void free_log_entrys(LogEntry* entrys, char* file_buffer) {
 
 int main() {
 
-    //char logPath[] = "../realistic_test.txt";
-    char logPath[] = "../heavy_test_log.txt";
-    //char logPath[] = "../Example-Log.txt";
-    //char logPath[] = "../test.txt";
+    //char logPath[] = "../Logs/realistic_test.txt";
+    char logPath[] = "../Logs/heavy_test_log.txt";
+    //char logPath[] = "../Logs/Example-Log.txt";
+    //char logPath[] = "../Logs/test.txt";
 
     int entryCount = 0;
     char* fileBuffer = readFileIntoBuffer(logPath);

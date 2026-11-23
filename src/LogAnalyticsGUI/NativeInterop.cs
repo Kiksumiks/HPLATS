@@ -14,11 +14,11 @@ namespace LogAnalyticsGUI {
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void CloseLogSession(IntPtr sessionHandle);
 
-        //[DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        //public static extern int RequestLogEntries(IntPtr sessionHandle, Byte levelFilter, Byte threadFilter, UInt64 minTimeFilter, UInt64 maxTimeFilter);
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int RequestLogEntries(IntPtr sessionHandle, Byte levelFilter, Byte threadFilter, UInt64 minTimeFilter, UInt64 maxTimeFilter);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int GetRequestedEntries(IntPtr sessionHandle, [Out] LogEntryManaged[] outbuffer, int maxCount, Byte levelFilter, Byte threadFilter, UInt64 minTimeFilter, UInt64 maxTimeFilter);
+        public static extern int GetRequestedEntries(IntPtr sessionHandle, [Out] LogEntryManaged[] outbuffer, int maxCount);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern int GetTotalCount(IntPtr sessionHandle);

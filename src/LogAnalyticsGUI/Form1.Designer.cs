@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            listBox = new ListBox();
             browse_button = new Button();
             filepath_label = new Label();
             metaLabel = new Label();
@@ -36,15 +35,8 @@
             softStat_label = new Label();
             filter_button = new Button();
             hardStat_label = new Label();
+            listView = new ListView();
             SuspendLayout();
-            // 
-            // listBox
-            // 
-            listBox.FormattingEnabled = true;
-            listBox.Location = new Point(12, 15);
-            listBox.Name = "listBox";
-            listBox.Size = new Size(860, 589);
-            listBox.TabIndex = 1;
             // 
             // browse_button
             // 
@@ -110,11 +102,23 @@
             hardStat_label.TabIndex = 11;
             hardStat_label.Text = "Errors:\r\nFatals:";
             // 
+            // listView
+            // 
+            listView.HeaderStyle = ColumnHeaderStyle.None;
+            listView.Location = new Point(12, 12);
+            listView.Name = "listView";
+            listView.Size = new Size(860, 592);
+            listView.TabIndex = 12;
+            listView.UseCompatibleStateImageBehavior = false;
+            listView.View = View.Details;
+            listView.VirtualMode = true;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(884, 661);
+            Controls.Add(listView);
             Controls.Add(hardStat_label);
             Controls.Add(filter_button);
             Controls.Add(count_label);
@@ -122,7 +126,6 @@
             Controls.Add(softStat_label);
             Controls.Add(filepath_label);
             Controls.Add(browse_button);
-            Controls.Add(listBox);
             Name = "Form1";
             Text = "HPLATS";
             ResumeLayout(false);
@@ -130,7 +133,6 @@
         }
 
         #endregion
-        private ListBox listBox;
         private Button browse_button;
         private Label filepath_label;
         private Label metaLabel;
@@ -138,5 +140,6 @@
         private Label softStat_label;
         private Button filter_button;
         private Label hardStat_label;
+        private ListView listView;
     }
 }
