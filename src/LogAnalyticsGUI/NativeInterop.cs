@@ -24,9 +24,6 @@ namespace LogAnalyticsGUI {
         public static extern int GetTotalCount(IntPtr sessionHandle);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool IsProcessingComplete(IntPtr sessionHandle);
-
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void GetLogInfoCounts(IntPtr sessionHandle, out int cInfo, out int cDebug, out int cWarning, out int cError, out int cFatal);
         
     }

@@ -9,7 +9,7 @@ namespace LogAnalyticsGUI
     public partial class Form1 : Form
     {
         private IntPtr sessionHandle = IntPtr.Zero;
-        private LogFilterCriteria activeFilters = new LogFilterCriteria();
+        private LogFilter activeFilters = new LogFilter();
         private LogEntryManaged[] currentEntries = Array.Empty<LogEntryManaged>();
         private int totalLogCount = 0;
         private int infoCount = 0;
@@ -21,7 +21,6 @@ namespace LogAnalyticsGUI
         public Form1()
         {
             InitializeComponent();
-            filter_button.Enabled = false;
 
             listView.View = View.Details;
             listView.VirtualMode = true;
@@ -32,6 +31,8 @@ namespace LogAnalyticsGUI
             listView.Columns.Add("Thread", 65);
             listView.Columns.Add("Message", -2);
             listView.RetrieveVirtualItem += ListView_RetrieveVirtualItem;
+
+            filter_button.Enabled = false;
         }
 
         private void browse_button_Click(object sender, EventArgs e)
@@ -54,9 +55,9 @@ namespace LogAnalyticsGUI
         private void filter_button_Click(object sender, EventArgs e)
         {
             using FilterForm filterForm = new(activeFilters);
-            if (filterForm.ShowDialog() == DialogResult.OK)
+            if (filterForm.ShowDialog(this) == DialogResult.OK)
             {
-                activeFilters = filterForm.Criteria;
+                activeFilters = filterForm.Filter;
 
                 _ = LoadAndDisplayLogs();
             }
@@ -79,42 +80,31 @@ namespace LogAnalyticsGUI
                 return;
             }
 
-            _ = CheckProcessComplete();
-
-            totalLogCount = NativeInterop.GetTotalCount(sessionHandle);
-            count_label.Text = $"{totalLogCount} log entries parsed in {parseTime.ElapsedMilliseconds}ms";
-        }
-        public async Task CheckProcessComplete()
-        {
-            await Task.Run(async () =>
-            {
-                while (!NativeInterop.IsProcessingComplete(sessionHandle))
-                {
-                    await Task.Delay(100);
-                }
-            });
-
-            metaLabel.Text = "Metadata ready";
-            filter_button.Enabled = true;
-
             NativeInterop.GetLogInfoCounts(sessionHandle, out infoCount, out debugCount, out warningCount, out errorCount, out fatalCount);
             softStat_label.Text = $"Infos: {infoCount}\r\nDebugs: {debugCount}\r\nWarnings: {warningCount}";
             hardStat_label.Text = $"Errors: {errorCount}\r\nFatals: {fatalCount}";
 
+            _ = LoadAndDisplayLogs();
 
-            await LoadAndDisplayLogs();
+            totalLogCount = NativeInterop.GetTotalCount(sessionHandle);
+            count_label.Text = $"{totalLogCount} log entries parsed in {parseTime.ElapsedMilliseconds}ms";
+
+            filter_button.Enabled = true;
         }
 
         private async Task LoadAndDisplayLogs()
         {
             var result = await Task.Run(() =>
             {
+                UInt64 minTime = activeFilters.StartTime.HasValue ? PackTimestamp(activeFilters.StartTime.Value) : 0;
+                UInt64 maxTime = activeFilters.EndTime.HasValue ? PackTimestamp(activeFilters.EndTime.Value) : 0;
+
                 // Count of records matching our filters
-                int structCount = NativeInterop.RequestLogEntries(sessionHandle, activeFilters.WarningLevel, activeFilters.ThreadId, 0, 0);
+                int structCount = NativeInterop.RequestLogEntries(sessionHandle, activeFilters.WarningLevel, activeFilters.ThreadId, minTime, maxTime);
                 LogEntryManaged[] entries = new LogEntryManaged[structCount];
                 // Count of records writed
                 int logsCount = NativeInterop.GetRequestedEntries(sessionHandle, entries, structCount);
-                // structCount and logsCount should be always same. There is nothing changing when we are catching entries.
+                // structCount and logsCount should be always same?
                 return (entries, logsCount);
             });
 
@@ -134,6 +124,13 @@ namespace LogAnalyticsGUI
             e.Item = item;
         }
 
+        private static ulong PackTimestamp(DateTime dt)
+        {
+            uint rDate = ((uint)dt.Year << 16) | ((uint)dt.Month << 8) | (uint)dt.Day;
+            uint rTime = ((uint)dt.Hour << 16) | ((uint)dt.Minute << 8) | (uint)dt.Second;
+
+            return ((ulong)rDate << 32) | rTime;
+        }
 
     }
 }

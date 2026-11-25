@@ -5,6 +5,9 @@
 #include <string.h>
 #include <time.h>
 
+// TODO
+// Change log file format to binary?
+
 char* readFileIntoBuffer(const char* filepath) {
 
     FILE* file = fopen(filepath, "r");
@@ -37,7 +40,7 @@ LogEntry* load_log_file(int* out_count, char* file_buffer) {
     LogEntry* entries = (LogEntry*)malloc(sizeof(LogEntry) * currentArraySize);
     if(entries == NULL) return NULL;
 
-    int index = 0;
+    int index = 0; // entryCount!?
 
     // strtok ran million logs in 0.15-0.16 seconds.
     // This is more "messy" but way faster. Million in ~0.06 seconds
@@ -46,13 +49,14 @@ LogEntry* load_log_file(int* out_count, char* file_buffer) {
 
     while (currentLine && *currentLine != '\0') {
 
-        // Prepare next line if it exists
+        // NULL terminate current line and move nextLine pointer to start of next line
         nextLine = strchr(currentLine, '\n');
         if (nextLine) {
             *nextLine = '\0';
             nextLine++;
         }
-
+		
+		// If line was invalid we return 0
         if (parse_log_line(currentLine, &entries[index])) {
             index++;
 
@@ -66,8 +70,8 @@ LogEntry* load_log_file(int* out_count, char* file_buffer) {
                 }
                 entries = tempEntries;
             }
-
         }
+		
         currentLine = nextLine;
     }
 
@@ -83,6 +87,7 @@ int parse_log_line(char* line, LogEntry* out_entry) {
     out_entry->date = line; 
     out_entry->time = line + 11;
 
+    // Hard af. Should not fail because of early return if line is not long enough.
     line[10] = '\0';
     line[19] = '\0';
 
@@ -110,6 +115,7 @@ void free_log_entrys(LogEntry* entrys, char* file_buffer) {
     if (file_buffer != NULL) free(file_buffer);
 }
 
+/*
 int main() {
 
     //char logPath[] = "../Logs/realistic_test.txt";
@@ -132,3 +138,4 @@ int main() {
 
     return 0;
 }
+*/

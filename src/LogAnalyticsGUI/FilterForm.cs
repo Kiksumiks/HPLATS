@@ -5,39 +5,48 @@ namespace LogAnalyticsGUI
     public partial class FilterForm : Form
     {
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public LogFilterCriteria Criteria { get; set; }
+        public LogFilter Filter { get; set; }
 
-        public FilterForm(LogFilterCriteria currentCriteria)
+        public FilterForm(LogFilter currentCriteria)
         {
             InitializeComponent();
-     
+
+            StartPosition = FormStartPosition.CenterParent;
             FormBorderStyle = FormBorderStyle.None;
             ControlBox = false;
 
-            logLevel.Items.AddRange(new string[] { "All", "Debug", "Info", "Warning", "Error", "Fatal" });
-            logLevel.SelectedIndex = currentCriteria.WarningLevel;
+            Filter = currentCriteria ?? new LogFilter();
+
+            logLevel.Items.AddRange(["All", "Debug", "Info", "Warning", "Error", "Fatal"]);
+            logLevel.SelectedIndex = Filter.WarningLevel;
             logLevel.DropDownStyle = ComboBoxStyle.DropDownList;
-            threadId.SelectedIndex = -1;
 
-            Criteria = currentCriteria ?? new LogFilterCriteria();
-        }
+            threadId.Items.AddRange(["All", "1", "2", "3", "4"]);
+            threadId.SelectedIndex = Filter.ThreadId;
+            threadId.DropDownStyle = ComboBoxStyle.DropDownList;
 
-/*
-        private void FilterForm_Load(object sender, EventArgs e)
-        {
-            dtpStart.Value = Criteria.StartTime == DateTime.MinValue ? DateTime.Now.AddDays(-1) : Criteria.StartTime;
-            dtpEnd.Value = Criteria.EndTime == DateTime.MaxValue ? DateTime.Now : Criteria.EndTime;
-            logLevel.SelectedIndex = Criteria.WarningLevel;
-            threadId.SelectedIndex = Criteria.ThreadId;
+            dtpStart.Format = DateTimePickerFormat.Custom;
+            dtpStart.CustomFormat = "yyyy-MM-dd HH:mm:ss";
+            dtpStart.ShowCheckBox = true;
+
+            dtpEnd.Format = DateTimePickerFormat.Custom;
+            dtpEnd.CustomFormat = "yyyy-MM-dd HH:mm:ss";
+            dtpEnd.ShowCheckBox = true;
+
+            dtpStart.Checked = Filter.StartTime.HasValue;
+            if (Filter.StartTime.HasValue) dtpStart.Value = Filter.StartTime.Value;
+
+            dtpEnd.Checked = Filter.EndTime.HasValue;
+            if (Filter.EndTime.HasValue) dtpEnd.Value = Filter.EndTime.Value;
+      
         }
-*/
 
         private void apply_button_Click(object sender, EventArgs e)
         {
-            Criteria.StartTime = dtpStart.Value;
-            Criteria.EndTime = dtpEnd.Value;
-            Criteria.WarningLevel = (logLevel.SelectedIndex < 0) ? (byte)0 : (byte)logLevel.SelectedIndex; // Why the fuck we have to cast 0 ??? Retarded language
-            Criteria.ThreadId = (threadId.SelectedIndex < 0) ? (byte)0 : (byte)threadId.SelectedIndex; // Why the fuck we have to cast 0 ??? Retarded language
+            Filter.StartTime = dtpStart.Checked ? dtpStart.Value : null;
+            Filter.EndTime = dtpEnd.Checked ? dtpEnd.Value : null;
+            Filter.WarningLevel = (byte)Math.Max(0, logLevel.SelectedIndex);
+            Filter.ThreadId = (byte)Math.Max(0, threadId.SelectedIndex);
             DialogResult = DialogResult.OK;
             Close();
         }

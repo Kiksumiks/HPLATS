@@ -122,9 +122,9 @@
             threadId_label.AutoSize = true;
             threadId_label.Location = new Point(12, 102);
             threadId_label.Name = "threadId_label";
-            threadId_label.Size = new Size(53, 15);
+            threadId_label.Size = new Size(57, 15);
             threadId_label.TabIndex = 9;
-            threadId_label.Text = "ThreadId";
+            threadId_label.Text = "Thread ID";
             // 
             // FilterForm
             // 

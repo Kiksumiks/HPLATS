@@ -30,7 +30,6 @@
         {
             browse_button = new Button();
             filepath_label = new Label();
-            metaLabel = new Label();
             count_label = new Label();
             softStat_label = new Label();
             filter_button = new Button();
@@ -57,15 +56,6 @@
             filepath_label.TabIndex = 4;
             filepath_label.Text = "File not selected";
             // 
-            // metaLabel
-            // 
-            metaLabel.AutoSize = true;
-            metaLabel.Location = new Point(426, 613);
-            metaLabel.Name = "metaLabel";
-            metaLabel.Size = new Size(110, 15);
-            metaLabel.TabIndex = 8;
-            metaLabel.Text = "Metadata not ready";
-            // 
             // count_label
             // 
             count_label.AutoSize = true;
@@ -85,7 +75,7 @@
             // 
             // filter_button
             // 
-            filter_button.Location = new Point(443, 631);
+            filter_button.Location = new Point(395, 631);
             filter_button.Name = "filter_button";
             filter_button.Size = new Size(75, 23);
             filter_button.TabIndex = 10;
@@ -122,7 +112,6 @@
             Controls.Add(hardStat_label);
             Controls.Add(filter_button);
             Controls.Add(count_label);
-            Controls.Add(metaLabel);
             Controls.Add(softStat_label);
             Controls.Add(filepath_label);
             Controls.Add(browse_button);
@@ -135,7 +124,6 @@
         #endregion
         private Button browse_button;
         private Label filepath_label;
-        private Label metaLabel;
         private Label count_label;
         private Label softStat_label;
         private Button filter_button;

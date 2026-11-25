@@ -1,10 +1,7 @@
-#define LOGENGINE_EXPORTS
 #include "LogEngineAPI.h"
 #include "Engine.h"
-#include <cstring>
-#include <cstdio>
-#include <cstdint>
 
+// This struct is what C# expects
 #pragma pack(push, 1)
 typedef struct {
     char date[11];
@@ -78,12 +75,6 @@ extern "C" {
         cWarning = engine->GetWarningCount();
         cError = engine->GetErrorCount();
         cFatal = engine->GetFatalCount();
-    }
-
-    LOGENGINE_API bool IsProcessingComplete(void* sessionHandle) {
-        if (!sessionHandle) return false;
-        LogEngine* engine = static_cast<LogEngine*>(sessionHandle);
-        return engine->IsMetadataReady();
     }
 
 }
